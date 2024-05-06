@@ -28,7 +28,7 @@ class MainWindow(QMainWindow):
 
     def init_ui(self):
 
-
+        self.folder = None
         # Body        
         self.body_frame = QFrame()
         self.body_frame.setFrameShape(QFrame.NoFrame)
@@ -98,9 +98,13 @@ class MainWindow(QMainWindow):
         # Edit menu
         edit_menu = menu_bar.addMenu("Edit")
         
-        copy_action = edit_menu.addAction("Copy")
-        copy_action.setShortcut("Ctrl+C")
-        copy_action.triggered.connect(self.copy)
+        makefile_create_action = edit_menu.addAction("create Makefile")
+        makefile_create_action.setShortcut("Ctrl+C")
+        makefile_create_action.triggered.connect(self.createMakefile)
+
+        # copy_action = edit_menu.addAction("create Makefile")
+        # copy_action.setShortcut("Ctrl+C")
+        # copy_action.triggered.connect(self.copy)
         # you can add more
 
     def get_editor(self, path: Path = None, is_python_file=True) -> QsciScintilla:
@@ -433,6 +437,7 @@ class MainWindow(QMainWindow):
 
         new_folder = QFileDialog.getExistingDirectory(self, "Pick A Folder", "", options=ops)
         if new_folder:
+            self.folder = new_folder
             self.file_manager.model.setRootPath(new_folder)
             # self.file_manager.model.tree_view.setRootIndex(self.file_manager.model.index(new_folder))
             self.statusBar().showMessage(f"Opened {new_folder}", 2000)
@@ -476,7 +481,8 @@ class MainWindow(QMainWindow):
         if editor is not None:
             editor.copy()
 
-
+    def createMakefile(self):
+        os.system('python ./createMakefile.py -r {0} -m ./config/makefile_template -l ./config/s32_link_template -a ./config/default.args'.format(self.folder))
 
 
 if __name__ == '__main__':
